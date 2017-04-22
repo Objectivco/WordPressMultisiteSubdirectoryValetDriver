@@ -12,7 +12,7 @@ class WordPressMultisiteSubdirectoryValetDriver extends BasicValetDriver
     public function serves($sitePath, $siteName, $uri)
     {
     	// Look for MULTISITE in wp-config.php. It should be there for multisite installs.
-    	return file_exists($sitePath . '/wp-config.php') && strpos( file_get_contents($sitePath . '/wp-config.php'), 'MULTISITE') !== false; 
+    	return file_exists($sitePath . '/wp-config.php') && strpos( file_get_contents($sitePath . '/wp-config.php'), 'MULTISITE') !== false;
     }
 
     /**
@@ -34,6 +34,15 @@ class WordPressMultisiteSubdirectoryValetDriver extends BasicValetDriver
         if ( ( stripos($uri, 'wp-admin') !== false || stripos($uri, 'wp-content') !== false || stripos($uri, 'wp-includes') !== false ) && stripos($uri, 'wp-admin/network') === false ) {
 			$uri = substr($uri, stripos($uri, '/wp-') );
        	}
+
+        // Handle wp-cron.php properly
+        if ( stripos($uri, 'wp-cron.php') !== false ) {
+            $new_uri = substr($uri, stripos($uri, '/wp-') );
+
+            if ( file_exists( $sitePath . $new_uri ) ) {
+                return $sitePath . $new_uri;
+            }
+        }
 
         return parent::frontControllerPath(
             $sitePath, $siteName, $this->forceTrailingSlash($uri)
