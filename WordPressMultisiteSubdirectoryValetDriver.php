@@ -1,6 +1,8 @@
 <?php
 class WordPressMultisiteSubdirectoryValetDriver extends BasicValetDriver
 {
+    public $wp_root = false; // "wp"
+
     /**
      * Determine if the driver serves the request.
      *
@@ -31,8 +33,15 @@ class WordPressMultisiteSubdirectoryValetDriver extends BasicValetDriver
 
         // If URI contains one of the main WordPress directories, and it's not a request for the Network Admin,
         // drop the subdirectory segment before routing the request
-        if ( ( stripos($uri, 'wp-admin') !== false || stripos($uri, 'wp-content') !== false || stripos($uri, 'wp-includes') !== false ) && stripos($uri, 'wp-admin/network') === false ) {
-			$uri = substr($uri, stripos($uri, '/wp-') );
+        if ( ( stripos($uri, 'wp-admin') !== false || stripos($uri, 'wp-content') !== false || stripos($uri, 'wp-includes') !== false ) ) {
+
+            if ( stripos($uri, 'wp-admin/network') === false ) {
+                $uri = substr($uri, stripos($uri, '/wp-') );
+            }
+
+            if ( $this->wp_root !== false && file_exists($sitePath . "/{$this->wp_root}/wp-admin") ) {
+                $uri = "/{$this->wp_root}" . $uri;
+            }
        	}
 
         // Handle wp-cron.php properly
@@ -57,6 +66,10 @@ class WordPressMultisiteSubdirectoryValetDriver extends BasicValetDriver
         	if ( substr($uri, -1, 1) == "/" ) return false;
 
        		$new_uri = substr($uri, stripos($uri, '/wp-') );
+
+            if ( $this->wp_root !== false && file_exists($sitePath . "/{$this->wp_root}/wp-admin") ) {
+                $new_uri = "/{$this->wp_root}" . $new_uri;
+            }
 
        		if ( file_exists( $sitePath . $new_uri ) ) {
        			return $sitePath . $new_uri;
