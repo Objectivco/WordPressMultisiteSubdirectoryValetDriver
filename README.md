@@ -4,7 +4,7 @@ A custom driver for [Laravel Valet](https://laravel.com/docs/master/valet) that 
 ## Installation
 1. `git clone https://github.com/Objectivco/WordPressMultisiteSubdirectoryValetDriver.git`
 2. `cd WordPressMultisiteSubdirectoryValetDriver`
-3. `cp WordPressMultisiteSubdirectoryValetDriver.php ~/.valet/Drivers`
+3. `cp WordPressMultisiteSubdirectoryValetDriver.php ~/.config/valet/Drivers`
 4. Make sure your wp-config.php file has at least one of WP_ALLOW_MULTISITE or MULTISITE constants defined.
 5. Celebrate the pain you just avoided!
 
